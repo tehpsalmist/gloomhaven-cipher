@@ -23,11 +23,11 @@
   },
   "homepage": "https://github.com/tehpsalmist/gloomhaven-cipher#readme",
   "devDependencies": {
-    "@parcel/transformer-postcss": "^2",
+    "@parcel/transformer-postcss": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "parcel": "^2",
+    "parcel": "latest",
     "tailwindcss": "latest"
   },
   "dependencies": {
