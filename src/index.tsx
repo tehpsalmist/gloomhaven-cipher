@@ -28,8 +28,11 @@ export const App = () => {
     })
 
   return (
-    <main className="h-screen flex items-center flex-col justify-evenly font-mono">
-      <div className="flex-center flex-wrap">
+    <main className="min-h-screen flex items-center flex-col justify-evenly font-mono p-2 sm:p-4">
+      <h2 className="text-2xl text-center my-6">
+        Long Message from Envelope A:
+      </h2>
+      <div className="flex-center flex-wrap mb-12">
         {longMessage.map((word, index) => (
           <div key={index} className="flex-center">
             {word.map((letter, i) => (
@@ -44,7 +47,10 @@ export const App = () => {
           </div>
         ))}
       </div>
-      <div className="flex-center flex-wrap">
+      <h2 className="text-2xl text-center my-6">
+        Short Message from Town Records:
+      </h2>
+      <div className="flex-center flex-wrap mb-12">
         {shortMessage.map((word, index) => (
           <div key={index} className="flex-center">
             {word.map((letter, i) => (
