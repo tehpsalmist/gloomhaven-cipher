@@ -31,8 +31,9 @@ export const DrawLetter = ({
       height="100%"
       width="100%"
     >
-      {lineSegments.map((seg) => (
+      {lineSegments.map((seg, i) => (
         <path
+          key={i}
           strokeWidth="8px"
           fill="none"
           stroke="currentColor"
@@ -44,7 +45,7 @@ export const DrawLetter = ({
 
         const [x, y] = coords[dot].split(",")
 
-        return <circle fill="currentColor" cx={x} cy={y} r="12" />
+        return <circle key={dot} fill="currentColor" cx={x} cy={y} r="12" />
       })}
     </svg>
   )

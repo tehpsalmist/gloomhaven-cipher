@@ -115,7 +115,7 @@ export const valueSpecs: Record<
       [2, 8],
       [7, 9]
     ],
-    dots: [7]
+    dots: [7, 2]
   },
   23: {
     lineSegments: [[1, 9, 7]],
@@ -126,15 +126,15 @@ export const valueSpecs: Record<
     dots: [5]
   },
   25: {
+    lineSegments: [[1, 3, 7, 9]],
+    dots: [1]
+  },
+  26: {
     lineSegments: [[8, 2, 9]],
     dots: [8, 2]
   },
-  26: {
+  27: {
     lineSegments: [[7, 3]],
     dots: [7, 3]
-  },
-  27: {
-    lineSegments: [[1, 3, 7, 9]],
-    dots: [1]
   }
 }
