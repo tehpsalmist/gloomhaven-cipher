@@ -1,3 +1,5 @@
+import { invertObject } from "./utils"
+
 export const usage = [
   {
     letter: "E",
@@ -160,12 +162,19 @@ export const shortMessage = [
   [1, 4, 12]
 ]
 
-export const getAlphabet = () =>
+export const getAlphabet = (): number[] =>
   Array(26)
     .fill(1)
     .map((n, i) => n + i)
 
-export const generateValuesFromMessage = (message: number[][]) => {
+export const generateValuesFromMessage = (
+  message: number[][],
+  fixedValues: Record<string, number>,
+  tolerance: number
+) => {
+  const culledUsage = usage.filter(({ letter }) => !fixedValues[letter])
+  const unAvailableCharacters = invertObject(fixedValues)
+
   const values = message.flat()
 
   const cumulativeCounts = values.reduce((counts, n) => {
@@ -175,14 +184,14 @@ export const generateValuesFromMessage = (message: number[][]) => {
     }
   }, {})
 
-  const alphabet = getAlphabet()
+  const charAlphabet = getAlphabet()
+    .filter((char) => !unAvailableCharacters[char])
+    .sort((a, b) => cumulativeCounts[b] - cumulativeCounts[a])
 
-  alphabet.sort((a, b) => cumulativeCounts[b] - cumulativeCounts[a])
-
-  return alphabet.reduce<Record<number, string>>((map, v, i) => {
+  return charAlphabet.reduce<Record<number, string>>((map, character, i) => {
     return {
       ...map,
-      [v]: usage[i].letter
+      [character]: culledUsage[i].letter
     }
-  }, {})
+  }, unAvailableCharacters)
 }

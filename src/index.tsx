@@ -5,16 +5,22 @@ import {
   longMessage,
   shortMessage
 } from "./alphabet"
-import { DrawLetter } from "./DrawLetter"
 import { useRememberedState } from "./hooks"
-import { valueSpecs } from "./valueSpecs"
+import { LetterBox } from "./LetterBox"
+import { invertObject } from "./utils"
 
 export const App = () => {
-  const [values, setValues] = useRememberedState("values", () =>
-    generateValuesFromMessage(longMessage.concat(shortMessage))
+  // const [tolerance, setTolerance] = useState(0)
+  const [values, setValues] = useRememberedState<Record<number, string>>(
+    "values",
+    {}
   )
 
-  const updateValues = (letter: number) => (val: string) =>
+  const [fixedValues, setFixedValues] = useRememberedState<
+    Record<string, number>
+  >("fixedValues", {})
+
+  const updateValues = (character: number) => (val: string) =>
     setValues((vals) => {
       const newVals = { ...vals }
 
@@ -22,7 +28,7 @@ export const App = () => {
         if (newVals[k] === val) newVals[k] = ""
       })
 
-      newVals[letter] = val
+      newVals[character] = val
 
       return newVals
     })
@@ -34,13 +40,22 @@ export const App = () => {
       </h2>
       <div className="flex-center flex-wrap mb-12">
         {longMessage.map((word, index) => (
-          <div key={index} className="flex-center">
-            {word.map((letter, i) => (
+          <div key={index} className="flex-center mt-4">
+            {word.map((character, i) => (
               <LetterBox
                 key={i}
-                character={letter}
-                letter={values[letter]}
-                onChange={updateValues(letter)}
+                character={character}
+                letter={values[character]}
+                onChange={updateValues(character)}
+                onFixLetter={(ltr, char) => {
+                  setFixedValues((vals) => ({ ...vals, [ltr]: char }))
+                }}
+                onUnFixLetter={(ltr) => {
+                  setFixedValues(({ [ltr]: removed, ...vals }) => ({
+                    ...vals
+                  }))
+                }}
+                fixed={!!fixedValues[values[character]]}
               />
             ))}
             <div className="w-8"></div>
@@ -52,70 +67,80 @@ export const App = () => {
       </h2>
       <div className="flex-center flex-wrap mb-12">
         {shortMessage.map((word, index) => (
-          <div key={index} className="flex-center">
-            {word.map((letter, i) => (
+          <div key={index} className="flex-center mt-4">
+            {word.map((character, i) => (
               <LetterBox
                 key={i}
-                character={letter}
-                letter={values[letter]}
-                onChange={updateValues(letter)}
+                character={character}
+                letter={values[character]}
+                onChange={updateValues(character)}
+                onFixLetter={(ltr, char) => {
+                  setFixedValues((vals) => ({ ...vals, [ltr]: char }))
+                }}
+                onUnFixLetter={(ltr) => {
+                  setFixedValues(({ [ltr]: removed, ...vals }) => ({
+                    ...vals
+                  }))
+                }}
+                fixed={!!fixedValues[values[character]]}
               />
             ))}
             <div className="w-8"></div>
           </div>
         ))}
       </div>
+      <div className="flex-center space-x-2 flex-wrap">
+        <button
+          disabled={!Object.keys(values).length}
+          onClick={(e) => {
+            setValues(invertObject(fixedValues))
+          }}
+          className="btn btn-primary"
+        >
+          Clear
+        </button>
+        <button
+          disabled={!Object.keys(values).length}
+          onClick={(e) => {
+            setFixedValues({})
+            setValues({})
+          }}
+          className="btn btn-primary"
+        >
+          Clear All
+        </button>
+      </div>
+      <div className="flex-center flex-wrap space-x-2">
+        <button
+          onClick={(e) => {
+            setValues(
+              generateValuesFromMessage(
+                longMessage.concat(shortMessage),
+                fixedValues,
+                0
+              )
+            )
+          }}
+          className="btn btn-primary"
+        >
+          Generate Frequency-Based Values
+        </button>
+        {/* <div className="flex flex-nowrap">
+          <label htmlFor="tolerance" className="mr-2">
+            Tolerance:
+          </label>
+          <input
+            id="tolerance"
+            type="number"
+            min="0"
+            max="26"
+            value={tolerance}
+            onChange={(e) => setTolerance(Number(e.target.value))}
+          />
+        </div> */}
+      </div>
     </main>
   )
-}
-
-const allowableValueRegex = /[0-9A-Z]/
-
-const LetterBox = ({
-  letter,
-  character,
-  onChange
-}: {
-  character?: number
-  letter: string
-  onChange(e: string): void
-}) => {
-  return (
-    <div className="flex flex-col items-center w-8 h-24">
-      <div className="h-8 min-h-8 text-blue-400 flex-center">
-        {valueSpecs[character] ? (
-          <DrawLetter {...valueSpecs[character]} />
-        ) : (
-          character
-        )}
-      </div>
-      <div className="text-indigo-700 flex-center h-full">
-        <input
-          className="border-0 h-full w-full text-center"
-          onChange={(e) => {
-            const val = e.target.value.toUpperCase()
-
-            if (
-              !val.length ||
-              (val.length === 1 && allowableValueRegex.test(val))
-            ) {
-              onChange(val)
-            }
-          }}
-          value={letter}
-        />
-      </div>
-      {/* {character && (
-        <div className="text-pink-500 flex-center h-full">
-          {leftpad2(character)}
-        </div>
-      )} */}
-    </div>
-  )
-}
-
-function leftpad2(num: number): string {
-  return num < 10 ? `0${num}` : `${num}`
 }
 
 render(<App />, document.getElementById("app"))

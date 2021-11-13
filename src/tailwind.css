@@ -2,6 +2,18 @@
 
 @tailwind components;
 
+.btn {
+  @apply p-2 rounded;
+}
+
+.btn:disabled {
+  @apply opacity-50;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-400;
+}
+
 @tailwind utilities;
 
 @responsive {
