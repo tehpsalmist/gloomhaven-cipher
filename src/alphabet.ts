@@ -188,10 +188,49 @@ export const generateValuesFromMessage = (
     .filter((char) => !unAvailableCharacters[char])
     .sort((a, b) => cumulativeCounts[b] - cumulativeCounts[a])
 
-  return charAlphabet.reduce<Record<number, string>>((map, character, i) => {
+  if (tolerance === 0) {
+    return charAlphabet.reduce<Record<number, string>>((map, character, i) => {
+      return {
+        ...map,
+        [character]: culledUsage[i].letter
+      }
+    }, unAvailableCharacters)
+  }
+
+  const availableLettersList = culledUsage.map(({ letter }) => letter)
+  const usedCache = {}
+
+  return charAlphabet.reduce((map, character, i) => {
+    const lowIndex = Math.max(0, i - tolerance)
+    const highIndex = i + tolerance
+
+    const candidatesLeftBehind = availableLettersList
+      .slice(0, lowIndex)
+      .filter((letter) => !usedCache[letter])
+
+    if (candidatesLeftBehind.length) {
+      const notSoRandomLetter = candidatesLeftBehind[0]
+
+      usedCache[notSoRandomLetter] = true
+
+      return {
+        ...map,
+        [character]: notSoRandomLetter
+      }
+    }
+
+    const candidateChars = availableLettersList
+      .slice(lowIndex, highIndex)
+      .filter((letter) => !usedCache[letter])
+
+    const randomletter =
+      candidateChars[Math.floor(Math.random() * candidateChars.length)]
+
+    usedCache[randomletter] = true
+
     return {
       ...map,
-      [character]: culledUsage[i].letter
+      [character]: randomletter
     }
   }, unAvailableCharacters)
 }

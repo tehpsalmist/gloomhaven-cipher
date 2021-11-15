@@ -10,7 +10,7 @@ import { LetterBox } from "./LetterBox"
 import { invertObject } from "./utils"
 
 export const App = () => {
-  // const [tolerance, setTolerance] = useState(0)
+  const [tolerance, setTolerance] = useState(0)
   const [values, setValues] = useRememberedState<Record<number, string>>(
     "values",
     {}
@@ -117,7 +117,7 @@ export const App = () => {
               generateValuesFromMessage(
                 longMessage.concat(shortMessage),
                 fixedValues,
-                0
+                tolerance
               )
             )
           }}
@@ -125,7 +125,7 @@ export const App = () => {
         >
           Generate Frequency-Based Values
         </button>
-        {/* <div className="flex flex-nowrap">
+        <div className="flex flex-nowrap">
           <label htmlFor="tolerance" className="mr-2">
             Tolerance:
           </label>
@@ -137,7 +137,7 @@ export const App = () => {
             value={tolerance}
             onChange={(e) => setTolerance(Number(e.target.value))}
           />
-        </div> */}
+        </div>
       </div>
     </main>
   )
